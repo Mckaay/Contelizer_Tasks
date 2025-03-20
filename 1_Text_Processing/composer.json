@@ -1,0 +1,19 @@
+{
+  "require": {
+    "php": "^8.3",
+    "symfony/console": "^7.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "ContelizerTasks\\TextProcessing\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ContelizerTasks\\TextProcessing\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "laravel/pint": "^1.10"
+  }
+}

@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use ContelizerTasks\TextProcessing\Commands\ProcessTextFile;
+use Symfony\Component\Console\Application;
+
+const INPUT_DIRECTORY = __DIR__ . '/../data/input/';
+const OUTPUT_DIRECTORY = __DIR__ . '/../data/output/';
+
+$application = new Application( name: 'Text From File Modifier', version: '1.0.0');
+$command =  new ProcessTextFile();
+$application->add($command);
+
+$application->setDefaultCommand($command->getName(), true);
+$application->run();

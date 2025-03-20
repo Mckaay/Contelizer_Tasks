@@ -1,0 +1,180 @@
+{% extends "base.html.twig" %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('usersApi') }}
+    {{ encore_entry_script_tags('userManager') }}
+{% endblock %}
+
+{% block body %}
+    <main class="flex items-center flex-col justify-center h-screen">
+        <div class="min-w-md mb-5 mt-5">
+            <div class="min-w-lg mb-5 mt-5 flex gap-2">
+                <input class="search flex h-10 min-w-md rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pl-10"
+                       placeholder="Search..." type="search">
+                <button id="searchButton" class="search-button px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors">
+                    Search
+                </button>
+            </div>
+        </div>
+        <div class="relative overflow-x-auto">
+            <table class="users-table w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-black uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Email
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Gender
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Status
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Action
+                    </th>
+                </tr>
+                </thead>
+                <tbody class="table-body">
+                </tbody>
+            </table>
+        </div>
+        <dialog id="editModal"
+                class="p-0 mx-auto my-auto rounded-lg shadow-xl max-w-lg overflow-hidden border border-gray-200">
+            <div class="bg-gray-300 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white">Edit User</h3>
+            </div>
+
+            <form class="edit-form min-w-[300px] md:min-w-[400px] bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 space-y-4">
+                    <div class="mb-4">
+                        <label for="name" class="block text-sm font-semibold text-black mb-1">Name</label>
+                        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                               type="text" name="name" id="name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-semibold text-black mb-1">Email</label>
+                        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                               type="email" name="email" id="email" required>
+                    </div>
+                    <fieldset class="mb-4">
+                        <legend class="text-sm font-semibold text-black mb-2">Gender</legend>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <input class="h-4 w-4 text-black focus:ring-black border-gray-300"
+                                       type="radio" id="female" name="gender" value="female" checked required>
+                                <label for="female" class="ml-2 block text-sm font-semibold text-black">Female</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input class="h-4 w-4 text-black focus:ring-black border-gray-300"
+                                       type="radio" id="male" name="gender" value="male">
+                                <label for="male" class="ml-2 block text-sm font-semibold text-black">Male</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="mb-4">
+                        <legend class="text-sm font-semibold text-black mb-2">Status</legend>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <input class="h-4 w-4 text-black focus:ring-black border-gray-300"
+                                       type="radio" id="active" name="status" value="active" checked required>
+                                <label for="active" class="ml-2 block text-sm font-semibold text-black">Active</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input class="h-4 w-4 text-black focus:bg-black border-gray-300"
+                                       type="radio" id="inactive" name="status" value="inactive">
+                                <label for="inactive"
+                                       class="ml-2 block text-sm font-semibold text-black">Inactive</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+                    <button type="button" id="cancelEditModal"
+                            class="cancel-button px-4 py-2 bg-gray-200 hover:bg-gray-300 text-sm font-semibold hover:cursor-pointer text-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" id="confirmEditModal"
+                            class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold hover:cursor-pointer rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">
+                        Confirm
+                    </button>
+                </div>
+            </form>
+        </dialog>
+
+        <dialog id="deleteModal"
+                class="p-0 mx-auto my-auto rounded-lg shadow-xl max-w-lg overflow-hidden border border-gray-200">
+            <div class="bg-red-50 px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-red-700">Confirm Deletion</h3>
+            </div>
+            <form class="min-w-[300px] md:min-w-[400px] bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-black">
+                                Are you sure you want to delete this item? This action cannot be undone and all
+                                associated data will be permanently removed.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+                    <button type="button" id="cancelDeleteModal"
+                            class="cancel-button px-4 py-2 bg-gray-200 hover:bg-gray-300 font-semibold text-sm hover:cursor-pointer text-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" id="confirmDeleteModal"
+                            class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm font-semibold  hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors">
+                        Delete
+                    </button>
+                </div>
+            </form>
+        </dialog>
+
+        <template data-id="0" id="user-table-row-template">
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                <th scope="row" class="name px-6 py-4 font-semibold text-gray-900 whitespace-nowrap dark:text-white">
+                </th>
+                <td class="email px-6 py-4">
+                </td>
+                <td class="gender px-6 py-4">
+                </td>
+                <td class="status px-6 py-4">
+                </td>
+                <td class="px-6 py-4">
+                    <button
+                            class="edit hover:cursor-pointer inline-flex items-center bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md border border-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                            type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                        Edit
+                    </button>
+                    <button
+                            class="delete hover:cursor-pointer inline-flex items-center bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1 rounded-md border border-red-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                            type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        </template>
+    </main>
+{% endblock %}
