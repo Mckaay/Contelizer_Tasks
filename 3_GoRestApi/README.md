@@ -6,10 +6,10 @@
 
 ## 📋 To Run
 - cd 3_GoRestApi
+- cp env.example .env
+- fill app secret_key and gorest api token in .env file
 - composer install
 - npm install
-- cp env.example .env 
-- fill app secret_key and gorest api token in .env file
+- npm run build 
 - symfony server:start
-- npm run build
 - localhost:8000 - demo
